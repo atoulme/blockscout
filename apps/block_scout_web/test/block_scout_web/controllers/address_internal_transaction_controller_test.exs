@@ -1,7 +1,8 @@
 defmodule BlockScoutWeb.AddressInternalTransactionControllerTest do
   use BlockScoutWeb.ConnCase
 
-  import BlockScoutWeb.Router.Helpers, only: [address_internal_transaction_path: 3]
+  import BlockScoutWeb.Router.Helpers,
+    only: [address_internal_transaction_path: 3, address_internal_transaction_path: 4]
 
   alias Explorer.Chain.{Block, InternalTransaction, Transaction}
   alias Explorer.ExchangeRates.Token
@@ -184,10 +185,17 @@ defmodule BlockScoutWeb.AddressInternalTransactionControllerTest do
         )
       end)
 
-      conn = get(conn, address_internal_transaction_path(BlockScoutWeb.Endpoint, :index, address.hash))
+      conn =
+        get(conn, address_internal_transaction_path(BlockScoutWeb.Endpoint, :index, address.hash, %{"type" => "JSON"}))
 
-      assert %{"block_number" => ^number, "index" => 11, "transaction_index" => ^transaction_index} =
-               conn.assigns.next_page_params
+      expected_response = %{
+        "next_page_path" =>
+          "/address/0x0000000000000000000000000000000000000077/internal_transactions?block_number=#{number}&index=11&transaction_index=#{
+            transaction_index
+          }"
+      }
+
+      assert expected_response = json_response(conn, 200)
     end
 
     test "next_page_params are empty if on last page", %{conn: conn} do
@@ -208,9 +216,10 @@ defmodule BlockScoutWeb.AddressInternalTransactionControllerTest do
         )
       end)
 
-      conn = get(conn, address_internal_transaction_path(BlockScoutWeb.Endpoint, :index, address.hash))
+      conn =
+        get(conn, address_internal_transaction_path(BlockScoutWeb.Endpoint, :index, address.hash, %{"type" => "JSON"}))
 
-      refute conn.assigns.next_page_params
+      assert %{"next_page_path" => nil} = json_response(conn, 200)
     end
   end
 end
