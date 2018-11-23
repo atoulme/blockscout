@@ -475,10 +475,19 @@ defmodule BlockScoutWeb.ViewingAddressesTest do
       |> AddressPage.visit_page(lincoln)
       |> AddressPage.click_tokens()
       |> AddressPage.click_token_transfers(token)
+
+      :timer.sleep(3_000)
+
+      session
       |> assert_has(AddressPage.token_transfers(transaction, count: 1))
+
+      session
+      |> page_source
+      |> IO.puts
+
+      session
       |> assert_has(AddressPage.token_transfer(transaction, lincoln, count: 1))
       |> assert_has(AddressPage.token_transfer(transaction, taft, count: 1))
-      |> refute_has(AddressPage.token_transfers_expansion(transaction))
     end
   end
 

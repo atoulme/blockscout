@@ -47,6 +47,16 @@ defmodule BlockScoutWeb.AddressTokenTransferController do
             )
         end
 
+      IO.puts "======================================"
+      IO.puts "======================================"
+      IO.puts "======================================"
+      IO.puts "======================================"
+      IO.inspect Enum.count(transactions_paginated), label: "transactions"
+      IO.puts "======================================"
+      IO.puts "======================================"
+      IO.puts "======================================"
+      IO.puts "======================================"
+
       transfers_json =
         Enum.map(transactions_paginated, fn transaction ->
           View.render_to_string(
